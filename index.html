@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Photo Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container header-container">
+            <div class="header-text">
+                <h1>Dharshika Gallery</h1>
+                <p>Explore beautiful photography</p>
+            </div>
+            <div class="header-actions">
+                <a href="about.html" class="btn filter-btn nav-about">About</a>
+                <button id="slideshow-btn" class="btn primary-btn" aria-label="Start Slideshow">Start Slideshow</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container nav-container">
+        <nav class="filter-nav" aria-label="Category Filters">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="nature">Nature</button>
+            <button class="filter-btn" data-category="city">City</button>
+            <button class="filter-btn" data-category="people">People</button>
+            <button class="filter-btn" data-category="animals">Animals</button>
+        </nav>
+    </div>
+
+    <main class="container">
+        <div id="gallery-grid" class="gallery-grid">
+            <!-- Gallery items will be dynamically generated here -->
+        </div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox" aria-hidden="true">
+        <div class="lightbox-overlay"></div>
+        <button id="close-btn" class="icon-btn close-btn" aria-label="Close Lightbox">&times;</button>
+
+        <button id="prev-btn" class="icon-btn nav-btn prev-btn" aria-label="Previous Image">&#10094;</button>
+
+        <div class="lightbox-content">
+            <img id="lightbox-img" src="" alt="Gallery Image">
+            <div class="lightbox-info">
+                <h2 id="lightbox-title"></h2>
+                <p id="lightbox-desc"></p>
+                <div id="slide-counter" class="slide-counter"></div>
+            </div>
+        </div>
+
+        <button id="next-btn" class="icon-btn nav-btn next-btn" aria-label="Next Image">&#10095;</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
