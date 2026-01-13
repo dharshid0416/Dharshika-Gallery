@@ -42,10 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Render Gallery
 function renderGallery(imagesToRender) {
+    if (!galleryGrid) return;
     galleryGrid.innerHTML = '';
-    
+
     // reset animation by voiding flow (optional simple approach)
-    
+
     imagesToRender.forEach((img, index) => {
         const item = document.createElement('div');
         item.className = 'gallery-item fade-in';
@@ -86,33 +87,84 @@ function filterGallery(category) {
 // Setup Event Listeners
 function setupEventListeners() {
     // Filter Buttons
-    filterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterGallery(btn.dataset.category);
+    if (filterBtns.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterGallery(btn.dataset.category);
+            });
         });
-    });
+    }
 
     // Slideshow Toggle
-    slideshowBtn.addEventListener('click', toggleSlideshow);
+    if (slideshowBtn) {
+        slideshowBtn.addEventListener('click', toggleSlideshow);
+    }
 
     // Lightbox Controls
-    document.getElementById('close-btn').addEventListener('click', closeLightbox);
-    document.getElementById('prev-btn').addEventListener('click', showPreviousImage);
-    document.getElementById('next-btn').addEventListener('click', showNextImage);
-    
+    const closeBtn = document.getElementById('close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+
+    const prevBtn = document.getElementById('prev-btn');
+    if (prevBtn) prevBtn.addEventListener('click', showPreviousImage);
+
+    const nextBtn = document.getElementById('next-btn');
+    if (nextBtn) nextBtn.addEventListener('click', showNextImage);
+
     // Close on background click
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target.classList.contains('lightbox-overlay')) {
-            closeLightbox();
-        }
-    });
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target.classList.contains('lightbox-overlay')) {
+                closeLightbox();
+            }
+        });
+    }
 
     // Keyboard Navigation
     document.addEventListener('keydown', handleKeyPress);
+
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        if (themeToggle) themeToggle.textContent = '☀️';
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            themeToggle.textContent = isDark ? '☀️' : '🌙';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    }
+
+    // Back to Top
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('visible');
+                backToTopBtn.classList.remove('hidden');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
 }
 
 // Lightbox Functions
 function openLightbox(index) {
+    if (!lightbox) return;
     currentIndex = index;
     updateLightboxContent();
     lightbox.classList.add('active');
@@ -121,6 +173,7 @@ function openLightbox(index) {
 }
 
 function closeLightbox() {
+    if (!lightbox) return;
     lightbox.classList.remove('active');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = ''; // Restore scrolling
@@ -130,13 +183,30 @@ function closeLightbox() {
 }
 
 function updateLightboxContent() {
+    if (!lightboxImg || !lightboxTitle || !lightboxDesc || !slideCounter) return;
+
     const img = filteredImages[currentIndex];
-    // Add simple fade effect for image transition could go here, but keeping it simple
+    const loader = document.getElementById('lightbox-loader');
+
+    // Show spinner, hide image initially for smooth load
+    if (loader) loader.classList.remove('hidden');
+    lightboxImg.style.opacity = '0';
+
+    // Set source
     lightboxImg.src = img.src;
     lightboxImg.alt = img.title;
+
+    // On load, hide spinner and fade in
+    lightboxImg.onload = () => {
+        if (loader) loader.classList.add('hidden');
+        lightboxImg.style.opacity = '1';
+    };
+
     lightboxTitle.textContent = img.title;
     lightboxDesc.textContent = img.description;
-    slideCounter.textContent = `${currentIndex + 1} / ${filteredImages.length}`;
+
+    // Enhanced Counter
+    slideCounter.textContent = `Image ${currentIndex + 1} of ${filteredImages.length}`;
 }
 
 function showNextImage() {
@@ -159,21 +229,23 @@ function toggleSlideshow() {
 }
 
 function startSlideshow() {
+    if (!slideshowBtn) return;
     isSlideshowPlaying = true;
     slideshowBtn.textContent = "Stop Slideshow";
     slideshowBtn.classList.add('active');
-    
+
     // If lightbox is not open, open it at first image of current filter
-    if (!lightbox.classList.contains('active')) {
+    if (lightbox && !lightbox.classList.contains('active')) {
         openLightbox(0);
     }
 
     slideshowInterval = setInterval(() => {
         showNextImage();
-    }, 1000);
+    }, 2000); // 2 seconds for better viewing
 }
 
 function stopSlideshow() {
+    if (!slideshowBtn) return;
     isSlideshowPlaying = false;
     slideshowBtn.textContent = "Start Slideshow";
     slideshowBtn.classList.remove('active');
@@ -182,9 +254,9 @@ function stopSlideshow() {
 
 // Keyboard Handling
 function handleKeyPress(e) {
-    if (!lightbox.classList.contains('active')) return;
+    if (!lightbox || !lightbox.classList.contains('active')) return;
 
-    switch(e.key) {
+    switch (e.key) {
         case 'Escape':
             closeLightbox();
             break;
