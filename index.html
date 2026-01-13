@@ -17,7 +17,8 @@
             </div>
             <div class="header-actions">
                 <a href="about.html" class="btn filter-btn nav-about">About</a>
-                <button id="slideshow-btn" class="btn primary-btn" aria-label="Start Slideshow">Start Slideshow</button>
+                <button id="slideshow-btn" class="btn primary-btn" aria-label="Start Slideshow">Slideshow</button>
+                <button id="theme-toggle" class="btn theme-toggle" aria-label="Toggle Dark Mode">🌙</button>
             </div>
         </div>
     </header>
@@ -38,6 +39,8 @@
         </div>
     </main>
 
+    <button id="back-to-top" class="back-to-top hidden" aria-label="Back to Top">↑</button>
+
     <!-- Lightbox Modal -->
     <div id="lightbox" class="lightbox" aria-hidden="true">
         <div class="lightbox-overlay"></div>
@@ -46,6 +49,7 @@
         <button id="prev-btn" class="icon-btn nav-btn prev-btn" aria-label="Previous Image">&#10094;</button>
 
         <div class="lightbox-content">
+            <div id="lightbox-loader" class="loader hidden"></div>
             <img id="lightbox-img" src="" alt="Gallery Image">
             <div class="lightbox-info">
                 <h2 id="lightbox-title"></h2>
